@@ -1,3 +1,109 @@
+// --- Inventory Intelligence ---
+const inventorySchema = new mongoose.Schema({
+  itemName: { type: String, required: true, trim: true },
+  stockQuantity: { type: Number, required: true, min: 0 },
+  threshold: { type: Number, default: 5, min: 0 },
+  isLowStock: { type: Boolean, default: false },
+  consumptionHistory: [
+    {
+      date: { type: Date, required: true },
+      quantityUsed: { type: Number, required: true, min: 0 }
+    }
+  ]
+});
+const Inventory = mongoose.model("Inventory", inventorySchema);
+
+// Helper: update isLowStock
+async function updateLowStock(item) {
+  item.isLowStock = item.stockQuantity < (item.threshold || 5);
+  await item.save();
+}
+
+// Add/Update Inventory Item
+app.post("/inventory", async (req, res) => {
+  try {
+    const { itemName, stockQuantity, threshold } = req.body;
+    if (!itemName || stockQuantity === undefined) {
+      return res.status(400).json({ success: false, message: "Missing itemName or stockQuantity" });
+    }
+    let item = await Inventory.findOne({ itemName });
+    if (item) {
+      item.stockQuantity = stockQuantity;
+      if (threshold !== undefined) item.threshold = threshold;
+      await updateLowStock(item);
+      return res.status(200).json({ success: true, data: item });
+    } else {
+      item = new Inventory({ itemName, stockQuantity, threshold });
+      await updateLowStock(item);
+      return res.status(201).json({ success: true, data: item });
+    }
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Failed to add/update inventory", error: error.message });
+  }
+});
+
+// Track consumption
+app.post("/inventory/:id/consume", async (req, res) => {
+  try {
+    const { quantityUsed } = req.body;
+    if (quantityUsed === undefined || quantityUsed < 0) {
+      return res.status(400).json({ success: false, message: "Invalid quantityUsed" });
+    }
+    const item = await Inventory.findById(req.params.id);
+    if (!item) return res.status(404).json({ success: false, message: "Item not found" });
+    item.stockQuantity -= quantityUsed;
+    item.consumptionHistory.push({ date: new Date(), quantityUsed });
+    await updateLowStock(item);
+    return res.status(200).json({ success: true, data: item });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Failed to track consumption", error: error.message });
+  }
+});
+
+// Prediction API
+app.get("/inventory/prediction", async (req, res) => {
+  try {
+    const items = await Inventory.find();
+    const predictions = items.map(item => {
+      const history = item.consumptionHistory;
+      if (!history || history.length === 0) {
+        return { itemName: item.itemName, daysLeft: null };
+      }
+      // Average daily usage
+      const totalUsed = history.reduce((sum, h) => sum + h.quantityUsed, 0);
+      const days = (history.length > 0) ? history.length : 1;
+      const avgDaily = totalUsed / days;
+      const daysLeft = avgDaily > 0 ? Math.floor(item.stockQuantity / avgDaily) : null;
+      return { itemName: item.itemName, daysLeft };
+    });
+    return res.status(200).json({ success: true, predictions });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Failed to predict inventory", error: error.message });
+  }
+});
+
+// Alert API
+app.get("/inventory/alerts", async (req, res) => {
+  try {
+    const items = await Inventory.find();
+    const alerts = [];
+    const now = new Date();
+    for (const item of items) {
+      const history = item.consumptionHistory;
+      if (!history || history.length === 0) continue;
+      const totalUsed = history.reduce((sum, h) => sum + h.quantityUsed, 0);
+      const days = history.length;
+      const avgDaily = totalUsed / (days || 1);
+      const daysLeft = avgDaily > 0 ? item.stockQuantity / avgDaily : null;
+      if (daysLeft !== null && daysLeft <= 7) {
+        alerts.push({ itemName: item.itemName, stockQuantity: item.stockQuantity, daysLeft: Math.floor(daysLeft) });
+      }
+    }
+    return res.status(200).json({ success: true, alerts });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Failed to get inventory alerts", error: error.message });
+  }
+});
 // --- PUT & DELETE APIs for All Models ---
 // Machine
 app.put("/machine/:id", async (req, res) => {
@@ -701,6 +807,23 @@ async function startServer() {
 startServer();
 
 /*
+// --- Inventory API Sample Usage ---
+
+// POST /inventory
+// { "itemName": "Oil Filter", "stockQuantity": 10 }
+// Response: { "success": true, "data": { ... } }
+
+// POST /inventory/:id/consume
+// { "quantityUsed": 2 }
+// Response: { "success": true, "data": { ... } }
+
+// GET /inventory/prediction
+// Response: { "success": true, "predictions": [ { "itemName": "Oil Filter", "daysLeft": 4 } ] }
+
+// GET /inventory/alerts
+// Response: { "success": true, "alerts": [ { "itemName": "Oil Filter", "stockQuantity": 3, "daysLeft": 2 } ] }
+
+// --- End Inventory API Sample Usage ---
 Sample API tests (PowerShell):
 
 // --- Sample API Usage ---
