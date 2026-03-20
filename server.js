@@ -1,3 +1,69 @@
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = 'your_secret_key'; // Change for production
+
+// --- User Model (already exists, ensure fields) ---
+// phone, password, role (admin, engineer, customer)
+
+// Login API: returns JWT
+app.post('/login', async (req, res) => {
+  try {
+    const { phone, password } = req.body;
+    if (!phone || !password) return res.status(400).json({ success: false, message: 'Missing phone or password' });
+    const user = await User.findOne({ phone });
+    if (!user || user.password !== password) {
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+    const token = jwt.sign({ userId: user._id, role: user.role, phone: user.phone }, JWT_SECRET, { expiresIn: '1d' });
+    return res.status(200).json({ success: true, token, user: { _id: user._id, phone: user.phone, role: user.role } });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Login failed', error: error.message });
+  }
+});
+
+// Middleware: verify JWT and role
+function authRole(requiredRole) {
+  return (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ success: false, message: 'Missing or invalid token' });
+    }
+    const token = authHeader.split(' ')[1];
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      req.user = decoded;
+      if (requiredRole && decoded.role !== requiredRole) {
+        return res.status(403).json({ success: false, message: 'Forbidden: insufficient role' });
+      }
+      next();
+    } catch (err) {
+      return res.status(401).json({ success: false, message: 'Invalid token' });
+    }
+  };
+}
+
+// Protect routes
+// Only admin can add inventory
+app.post('/inventory', authRole('admin'), async (req, res) => {
+  // ...existing code for adding inventory...
+});
+
+// Engineer can update service
+app.put('/service/:id', authRole('engineer'), async (req, res) => {
+  // ...existing code for updating service...
+});
+
+// Customer can view only own data
+app.get('/customer/:id/details', authRole('customer'), async (req, res) => {
+  try {
+    const customerId = req.params.id;
+    if (req.user.userId !== customerId) {
+      return res.status(403).json({ success: false, message: 'Forbidden: can only view own data' });
+    }
+    // ...existing code for customer details...
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Failed to fetch customer details', error: error.message });
+  }
+});
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
@@ -974,6 +1040,25 @@ async function startServer() {
 startServer();
 
 /*
+// --- Role-Based Auth API Sample Usage ---
+
+// POST /login
+// { "phone": "9876543210", "password": "secret" }
+// Response: { "success": true, "token": "...", "user": { "_id": "...", "phone": "9876543210", "role": "admin" } }
+
+// POST /inventory (admin only)
+// Header: Authorization: Bearer <token>
+// Response: { "success": true, "data": { ... } }
+
+// PUT /service/:id (engineer only)
+// Header: Authorization: Bearer <token>
+// Response: { "success": true, "data": { ... } }
+
+// GET /customer/:id/details (customer only)
+// Header: Authorization: Bearer <token>
+// Response: { "success": true, "customer": { ... } }
+
+// --- End Role-Based Auth API Sample Usage ---
 // --- Order & Invoice API Sample Usage ---
 
 // POST /order
