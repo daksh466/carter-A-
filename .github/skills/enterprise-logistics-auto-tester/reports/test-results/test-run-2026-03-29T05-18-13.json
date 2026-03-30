@@ -1,0 +1,203 @@
+{
+  "status": "PASS",
+  "timestamp": "2026-03-29T05:18:08.851Z",
+  "end_timestamp": "2026-03-29T05:18:13.320Z",
+  "duration_ms": 4469,
+  "metrics": {
+    "stores_created": 5,
+    "machines_created": 14,
+    "spare_parts_created": 10,
+    "total_assignments": 50,
+    "initial_inventory_records": 50,
+    "shipments_tested": 5,
+    "edge_cases_validated": 3,
+    "stress_iterations": 0
+  },
+  "passed_steps_count": 12,
+  "passed_steps": [
+    "step_1_create_stores",
+    "step_2_create_machines",
+    "step_3_create_spare_parts",
+    "step_4_assign_spares",
+    "step_5_seed_inventory",
+    "step_6_outgoing_shipments",
+    "step_7_incoming_shipments",
+    "step_8_confirm_receive",
+    "step_9_validate_transfers",
+    "step_10_machine_validation",
+    "step_11_inventory_consistency",
+    "step_12_edge_cases"
+  ],
+  "failed_steps_count": 1,
+  "failed_steps": [
+    "step_13_stress_test"
+  ],
+  "errors_count": 0,
+  "errors": [],
+  "warnings_count": 27,
+  "warnings": [
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: decofer",
+      "timestamp": "2026-03-29T05:18:10.251Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: sheet",
+      "timestamp": "2026-03-29T05:18:10.252Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: bearing 6201",
+      "timestamp": "2026-03-29T05:18:10.253Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: sheet",
+      "timestamp": "2026-03-29T05:18:10.253Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: bolt",
+      "timestamp": "2026-03-29T05:18:10.253Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: gasket",
+      "timestamp": "2026-03-29T05:18:10.254Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: filter element",
+      "timestamp": "2026-03-29T05:18:10.255Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: chain link",
+      "timestamp": "2026-03-29T05:18:10.255Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: bearing 6201",
+      "timestamp": "2026-03-29T05:18:10.256Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: sheet",
+      "timestamp": "2026-03-29T05:18:10.256Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: bolt",
+      "timestamp": "2026-03-29T05:18:10.257Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: gasket",
+      "timestamp": "2026-03-29T05:18:10.257Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: filter element",
+      "timestamp": "2026-03-29T05:18:10.258Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: chain link",
+      "timestamp": "2026-03-29T05:18:10.259Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: bearing 6201",
+      "timestamp": "2026-03-29T05:18:10.259Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: sheet",
+      "timestamp": "2026-03-29T05:18:10.259Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: bolt",
+      "timestamp": "2026-03-29T05:18:10.260Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: gasket",
+      "timestamp": "2026-03-29T05:18:10.260Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: filter element",
+      "timestamp": "2026-03-29T05:18:10.261Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: chain link",
+      "timestamp": "2026-03-29T05:18:10.262Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: bearing 6201",
+      "timestamp": "2026-03-29T05:18:10.262Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: sheet",
+      "timestamp": "2026-03-29T05:18:10.263Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: bolt",
+      "timestamp": "2026-03-29T05:18:10.264Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: gasket",
+      "timestamp": "2026-03-29T05:18:10.264Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: filter element",
+      "timestamp": "2026-03-29T05:18:10.265Z",
+      "context": {}
+    },
+    {
+      "step": "Step 11",
+      "message": "Duplicate spare part: chain link",
+      "timestamp": "2026-03-29T05:18:10.265Z",
+      "context": {}
+    },
+    {
+      "step": "Step 13",
+      "message": "POST /api/transfers failed after 3 retries: HTTP 400: Validation failed | details: [\"Spare part 69c8b6113dc8fd1fcdc28f00 not found in source store\"]",
+      "timestamp": "2026-03-29T05:18:13.315Z",
+      "context": {}
+    }
+  ],
+  "summary": "**Pass Rate**: 92.3% (12/13 steps)\n**Total Errors**: 0\n**Total Warnings**: 27\n\n✅ All critical steps passed. System validation successful."
+}

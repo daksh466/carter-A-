@@ -1,0 +1,52 @@
+{
+  "transferCount": 12,
+  "quantityPerTransfer": 5,
+  "totalQuantity": 60,
+  "createElapsedMs": 1120,
+  "receiveElapsedMs": 597,
+  "createAverageMs": 93.33,
+  "receiveAverageMs": 49.75,
+  "sourceQuantityAfterCreate": 60,
+  "sourceQuantityAfterReceive": 60,
+  "destinationQuantityAfterReceive": 60,
+  "transferStatuses": {
+    "received": 12,
+    "nonReceived": 0
+  },
+  "endpointMetricsSnapshot": {
+    "totals": {
+      "requests": 24,
+      "errors": 0,
+      "slowRequests": 20,
+      "errorRate": 0,
+      "slowRate": 83.33,
+      "p95Ms": 809.26
+    },
+    "createRoute": {
+      "route": "POST /",
+      "count": 12,
+      "errorRate": 0,
+      "slowRate": 91.67,
+      "p95Ms": 868.64,
+      "avgMs": 586.83
+    },
+    "receiveRoute": {
+      "route": "PATCH /:id/receive",
+      "count": 12,
+      "errorRate": 0,
+      "slowRate": 75,
+      "p95Ms": 481.45,
+      "avgMs": 333.26
+    }
+  },
+  "destinationBatchCount": 1,
+  "destinationBatches": [
+    {
+      "batch_number": "LOT-A",
+      "quantity": 60,
+      "expiry_date": "2026-08-01T00:00:00.000Z",
+      "received_date": "2026-03-30T05:28:42.938Z",
+      "_id": "69ca0a0afeba184013187d26"
+    }
+  ]
+}

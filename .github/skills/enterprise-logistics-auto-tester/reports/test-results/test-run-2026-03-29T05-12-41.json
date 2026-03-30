@@ -1,0 +1,46 @@
+{
+  "status": "FAIL",
+  "timestamp": "2026-03-29T05:12:37.932Z",
+  "end_timestamp": "2026-03-29T05:12:41.158Z",
+  "duration_ms": 3226,
+  "metrics": {
+    "stores_created": 0,
+    "machines_created": 0,
+    "spare_parts_created": 0,
+    "total_assignments": 0,
+    "initial_inventory_records": 0,
+    "shipments_tested": 0,
+    "edge_cases_validated": 0,
+    "stress_iterations": 0
+  },
+  "passed_steps_count": 0,
+  "passed_steps": [],
+  "failed_steps_count": 1,
+  "failed_steps": [
+    "step_1_create_stores"
+  ],
+  "errors_count": 1,
+  "errors": [
+    {
+      "step": "Step 1",
+      "message": "POST /api/stores failed after 3 retries: ",
+      "timestamp": "2026-03-29T05:12:41.153Z",
+      "context": {
+        "testState": {
+          "stores": {},
+          "machines": {},
+          "spareParts": {},
+          "assignments": [],
+          "inventory": [],
+          "shipments": {
+            "outgoing": [],
+            "incoming": []
+          }
+        }
+      }
+    }
+  ],
+  "warnings_count": 0,
+  "warnings": [],
+  "summary": "**Pass Rate**: 0.0% (0/1 steps)\n**Total Errors**: 1\n**Total Warnings**: 0\n\n❌ Test suite encountered failures. Review errors above for details."
+}

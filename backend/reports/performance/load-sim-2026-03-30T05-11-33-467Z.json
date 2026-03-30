@@ -1,0 +1,26 @@
+{
+  "transferCount": 12,
+  "quantityPerTransfer": 5,
+  "totalQuantity": 60,
+  "createElapsedMs": 437,
+  "receiveElapsedMs": 252,
+  "createAverageMs": 36.42,
+  "receiveAverageMs": 21,
+  "sourceQuantityAfterCreate": 60,
+  "sourceQuantityAfterReceive": 60,
+  "destinationQuantityAfterReceive": 60,
+  "transferStatuses": {
+    "received": 12,
+    "nonReceived": 0
+  },
+  "destinationBatchCount": 1,
+  "destinationBatches": [
+    {
+      "batch_number": "LOT-A",
+      "quantity": 60,
+      "expiry_date": "2026-08-01T00:00:00.000Z",
+      "received_date": "2026-03-30T05:11:34.962Z",
+      "_id": "69ca06065485be2e92d676ec"
+    }
+  ]
+}

@@ -24,6 +24,10 @@ exports.createOrder = async (req, res, next) => {
   const useTransaction = process.env.NODE_ENV !== 'test';
   
   let session = null;
+  let inventory = null;
+  let originalStock = null;
+  let createdOrderId = null;
+
   if (useTransaction) {
     session = await mongoose.startSession();
     session.startTransaction();
@@ -31,18 +35,31 @@ exports.createOrder = async (req, res, next) => {
   
   try {
     const { itemCode, quantity } = req.body;
-    
-    const inventory = await Inventory.findOne({ itemCode }).session(session);
+
+    // `auth` middleware in test mode uses a placeholder user id; avoid write-time cast errors.
+    const normalizedUserId = mongoose.Types.ObjectId.isValid(req.user?.id)
+      ? new mongoose.Types.ObjectId(req.user.id)
+      : null;
+
+    const inventoryQuery = Inventory.findOne({ itemCode });
+    inventory = useTransaction ? await inventoryQuery.session(session) : await inventoryQuery;
     if (!inventory || inventory.stock < quantity) {
       if (useTransaction) await session.abortTransaction();
       throw new AppError('Insufficient stock', 400);
     }
-    
+
+    originalStock = Number(inventory.stock || 0);
     inventory.stock -= quantity;
     await inventory.save({ session });
-    
-    const order = new Order({ itemCode, quantity, user: req.user.id });
+
+    const orderPayload = { itemCode, quantity };
+    if (normalizedUserId) {
+      orderPayload.user = normalizedUserId;
+    }
+
+    const order = new Order(orderPayload);
     await order.save({ session });
+    createdOrderId = order._id;
     
     // Generate PDF invoice
     const pdfPath = await createInvoicePDF(`Order: ${order._id}\\nItem: ${itemCode}\\nQuantity: ${quantity}`);
@@ -57,6 +74,26 @@ exports.createOrder = async (req, res, next) => {
   } catch (err) {
     if (useTransaction && session) {
       await session.abortTransaction();
+    } else {
+      // Best-effort rollback in non-transaction mode (used by test/standalone Mongo).
+      if (inventory && originalStock !== null) {
+        try {
+          await Inventory.updateOne(
+            { _id: inventory._id },
+            { $set: { stock: originalStock, updatedAt: new Date() } }
+          );
+        } catch (_) {
+          // no-op
+        }
+      }
+
+      if (createdOrderId) {
+        try {
+          await Order.deleteOne({ _id: createdOrderId });
+        } catch (_) {
+          // no-op
+        }
+      }
     }
     next(err);
   } finally {

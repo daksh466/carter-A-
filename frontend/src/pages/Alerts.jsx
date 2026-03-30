@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import api from "../services/api";
+import { getAlerts } from "../services/api";
 
 const Alerts = () => {
   const [alerts, setAlerts] = useState([]);
@@ -8,12 +8,12 @@ const Alerts = () => {
 
   useEffect(() => {
     setLoading(true);
-    api.get("/inventory/alerts")
-      .then(res => {
-        setAlerts(res.data);
+    getAlerts()
+      .then((res) => {
+        setAlerts(Array.isArray(res?.data) ? res.data : []);
         setError(null);
       })
-      .catch(err => {
+      .catch(() => {
         setError("Failed to load alerts.");
       })
       .finally(() => setLoading(false));

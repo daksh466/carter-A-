@@ -1,0 +1,51 @@
+{
+  "name": "enterprise-logistics-auto-tester",
+  "version": "1.0.0",
+  "description": "QA automation for enterprise logistics systems - full shipment workflows and inventory consistency validation",
+  "main": "scripts/main.js",
+  "bin": {
+    "logistics-tester": "scripts/main.js"
+  },
+  "scripts": {
+    "test": "node scripts/main.js --full --reset-db",
+    "test:quick": "node scripts/main.js --full --reset-db --steps 1-5",
+    "test:shipments": "node scripts/main.js --steps 6-9",
+    "test:edge-cases": "node scripts/main.js --steps 12",
+    "test:stress": "node scripts/main.js --steps 13",
+    "db:reset": "node scripts/db-reset.js",
+    "db:verify": "node scripts/db-reset.js --verify-only",
+    "report:example": "node scripts/report-generator.js"
+  },
+  "keywords": [
+    "logistics",
+    "qa",
+    "automation",
+    "testing",
+    "inventory",
+    "shipments",
+    "workflow",
+    "validation"
+  ],
+  "author": "Enterprise Logistics Team",
+  "license": "Proprietary",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "minimist": "^1.2.8",
+    "mongoose": "^7.0.0",
+    "playwright": "^1.40.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourorg/logistics-auto-tester.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourorg/logistics-auto-tester/issues"
+  }
+}

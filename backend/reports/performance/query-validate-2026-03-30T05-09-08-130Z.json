@@ -1,0 +1,114 @@
+[
+  {
+    "name": "inventory_list_store",
+    "stages": [
+      "FETCH",
+      "SORT",
+      "IXSCAN"
+    ],
+    "ixscan": true,
+    "collscan": false,
+    "executionTimeMillis": 8,
+    "nReturned": 50,
+    "totalDocsExamined": 50,
+    "totalKeysExamined": 301
+  },
+  {
+    "name": "inventory_list_store_machine",
+    "stages": [
+      "FETCH",
+      "SORT",
+      "IXSCAN"
+    ],
+    "ixscan": true,
+    "collscan": false,
+    "executionTimeMillis": 0,
+    "nReturned": 0,
+    "totalDocsExamined": 0,
+    "totalKeysExamined": 1
+  },
+  {
+    "name": "transfer_list_incoming",
+    "stages": [
+      "SORT",
+      "FETCH",
+      "IXSCAN"
+    ],
+    "ixscan": true,
+    "collscan": false,
+    "executionTimeMillis": 1,
+    "nReturned": 6,
+    "totalDocsExamined": 6,
+    "totalKeysExamined": 6
+  },
+  {
+    "name": "transfer_list_outgoing",
+    "stages": [
+      "SORT",
+      "FETCH",
+      "IXSCAN"
+    ],
+    "ixscan": true,
+    "collscan": false,
+    "executionTimeMillis": 1,
+    "nReturned": 6,
+    "totalDocsExamined": 6,
+    "totalKeysExamined": 6
+  },
+  {
+    "name": "transfer_stats_total",
+    "stages": [
+      "GROUP",
+      "FETCH",
+      "OR",
+      "IXSCAN",
+      "project",
+      "group",
+      "filter",
+      "nlj",
+      "unique_roaring",
+      "union",
+      "ixseek",
+      "limit",
+      "seek"
+    ],
+    "ixscan": true,
+    "collscan": false,
+    "executionTimeMillis": 0,
+    "nReturned": 0,
+    "totalDocsExamined": 0,
+    "totalKeysExamined": 0
+  },
+  {
+    "name": "transfer_stats_outgoing",
+    "stages": [
+      "GROUP",
+      "COUNT_SCAN",
+      "project",
+      "group",
+      "ixseek"
+    ],
+    "ixscan": true,
+    "collscan": false,
+    "executionTimeMillis": 0,
+    "nReturned": 0,
+    "totalDocsExamined": 0,
+    "totalKeysExamined": 0
+  },
+  {
+    "name": "transfer_stats_incoming",
+    "stages": [
+      "GROUP",
+      "COUNT_SCAN",
+      "project",
+      "group",
+      "ixseek"
+    ],
+    "ixscan": true,
+    "collscan": false,
+    "executionTimeMillis": 0,
+    "nReturned": 0,
+    "totalDocsExamined": 0,
+    "totalKeysExamined": 0
+  }
+]

@@ -1,0 +1,13 @@
+[
+  {
+    "_id": "69c77e4f4a9638ee7ef4d18d",
+    "marker": "smoke-1774681679087",
+    "type": "backup-restore-smoke",
+    "createdAt": "2026-03-28T07:07:59.110Z",
+    "payload": {
+      "supplier": "smoke supplier",
+      "qty": 7,
+      "unitPrice": 15
+    }
+  }
+]

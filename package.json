@@ -5,6 +5,14 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "dev": "node scripts/kill-ports.js 5000 5173 && concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "test:all": "npm --prefix backend test -- --silent",
+    "perf:guard": "node scripts/performance.load.js",
+    "onboarding:smoke": "node scripts/onboarding.smoke.js",
+    "deploy:staging": "npx pm2 startOrReload ecosystem.config.js --env staging && node scripts/performance.load.js",
+    "deploy:prod": "npm --prefix frontend run build && npx pm2 startOrReload ecosystem.config.js --env production",
     "test": "jest --coverage --detectOpenHandles",
     "test:watch": "jest --watch",
     "test:verbose": "jest --verbose --coverage"
@@ -30,8 +38,10 @@
     "xss": "^1.0.14"
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "jest": "^30.3.0",
     "mongodb-memory-server": "^11.0.1",
+    "playwright": "^1.58.2",
     "supertest": "^7.2.2"
   }
 }
