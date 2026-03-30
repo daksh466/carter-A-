@@ -1,6 +1,6 @@
 // --- Imports ---
 const express = require('express');
-const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 const { logger, httpLogger } = require('./src/utils/logger');
 const sanitize = require('./src/middlewares/sanitize');
 const validateEnv = require('./src/utils/envValidator');
@@ -20,6 +20,7 @@ const sparePartRoutes = require('./src/routes/sparePartRoutes');
 const serviceRoutes = require('./src/routes/serviceRoutes');
 const connectionRoutes = require('./src/routes/connectionRoutes');
 const healthRoutes = require('./src/routes/healthRoutes');
+const connectDB = require('./config/db');
 const fs = require('fs');
 const path = require('path');
 
@@ -28,14 +29,11 @@ const logDir = path.join(__dirname, 'src', 'logs');
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
 }
-const dotenv = require('dotenv');
-
-
 dotenv.config();
 // Validate environment variables
 validateEnv(process.env);
 
-const { port, mongoUri } = require('./src/config');
+const PORT = process.env.PORT || 5000;
 const app = express();
 
 // Ensure PDF storage directory exists
@@ -81,22 +79,30 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/spareparts', sparePartRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/connections', connectionRoutes);
+app.get('/api/test', (req, res) => {
+  res.status(200).json({
+    message: 'API + DB Connected Successfully'
+  });
+});
 
 // Error handling middleware (after routes)
 app.use(notFound);
 app.use(errorHandler);
 
-// Connect to MongoDB only in non-test environments
-if (process.env.NODE_ENV !== 'test') {
-  mongoose.connect(mongoUri)
-    .then(() => {
-      app.listen(port, () => {
-        logger.info(`Server running on port ${port}`);
-      });
-    })
-    .catch(err => {
-      logger.error('MongoDB connection error', err);
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, '0.0.0.0', () => {
+      logger.info(`Server running on port ${PORT}`);
     });
+  } catch (err) {
+    logger.error('Server failed to start due to database connection error', err);
+    process.exit(1);
+  }
+};
+
+if (process.env.NODE_ENV !== 'test') {
+  startServer();
 }
 
 // --- Export app for Jest compatibility ---
