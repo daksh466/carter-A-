@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
   ArrowDownLeft,
@@ -69,6 +69,41 @@ const PremiumCard = ({ title, children, className = "", action }) => (
 );
 
 const Dashboard = () => {
+  const usageChartRef = useRef(null);
+  const distributionChartRef = useRef(null);
+  const [canRenderUsageChart, setCanRenderUsageChart] = useState(false);
+  const [canRenderDistributionChart, setCanRenderDistributionChart] = useState(false);
+
+  useEffect(() => {
+    const node = usageChartRef.current;
+    if (!node) return;
+
+    const update = () => {
+      const { width, height } = node.getBoundingClientRect();
+      setCanRenderUsageChart(width > 1 && height > 1);
+    };
+
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const node = distributionChartRef.current;
+    if (!node) return;
+
+    const update = () => {
+      const { width, height } = node.getBoundingClientRect();
+      setCanRenderDistributionChart(width > 1 && height > 1);
+    };
+
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   const {
     stores = [],
     machines = [],
@@ -221,7 +256,8 @@ const Dashboard = () => {
               </div>
               <div className="lg:col-span-2">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="h-[220px]" style={{ minWidth: 1, minHeight: 220 }}>
+                  <div ref={usageChartRef} className="h-[220px]" style={{ minWidth: 1, minHeight: 220 }}>
+                    {canRenderUsageChart ? (
                     <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={220}>
                       <AreaChart data={usageTrends}>
                         <defs><linearGradient id="usageGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#3b82f6" stopOpacity={0.4}/><stop offset="100%" stopColor="#3b82f6" stopOpacity={0}/></linearGradient></defs>
@@ -232,8 +268,10 @@ const Dashboard = () => {
                         <Area type="monotone" dataKey="usage" stroke="#3b82f6" strokeWidth={3} fill="url(#usageGrad)" />
                       </AreaChart>
                     </ResponsiveContainer>
+                    ) : null}
                   </div>
-                  <div className="h-[220px]" style={{ minWidth: 1, minHeight: 220 }}>
+                  <div ref={distributionChartRef} className="h-[220px]" style={{ minWidth: 1, minHeight: 220 }}>
+                    {canRenderDistributionChart ? (
                     <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={220}>
                       <RePieChart>
                         <Pie data={inventoryDistribution} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} innerRadius={35} paddingAngle={3}>
@@ -242,6 +280,7 @@ const Dashboard = () => {
                         <Tooltip contentStyle={chartTooltipStyle} />
                       </RePieChart>
                     </ResponsiveContainer>
+                    ) : null}
                   </div>
                 </div>
               </div>
