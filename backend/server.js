@@ -18,6 +18,16 @@ const {
   Transfer
 } = models;
 
+// Verify models are loaded
+console.log('🔍 Models status:', {
+  Store: !!Store,
+  Machine: !!Machine,
+  SparePart: !!SparePart,
+  Order: !!Order,
+  PurchaseOrder: !!PurchaseOrder,
+  Transfer: !!Transfer
+});
+
 const parseMachineIdsFromBody = (body = {}) => {
   const raw = [];
 
@@ -289,29 +299,6 @@ app.get(['/api', '/api/'], (req, res) => {
   });
 });
 
-app.get('/api/test', (req, res) => {
-  res.json({ success: true, message: 'API connection successful!' });
-});
-
-app.get('/api/health', (req, res) => {
-  const dbConnected = mongoose.connection.readyState === 1;
-  const modelsStatus = {
-    Store: !!models.Store,
-    Machine: !!models.Machine,
-    SparePart: !!models.SparePart,
-    Order: !!models.Order,
-    PurchaseOrder: !!models.PurchaseOrder,
-    Transfer: !!models.Transfer
-  };
-  res.json({ 
-    success: true, 
-    message: 'API healthy',
-    dbConnected,
-    modelsStatus,
-    timestamp: new Date().toISOString()
-  });
-});
-
 app.get('/api/metrics', requireMetricsAccess, (req, res) => {
   const routeStats = Array.from(observability.perRoute.entries())
     .map(([route, stats]) => ({
@@ -400,12 +387,86 @@ app.get('/api/metrics/prometheus', requireMetricsAccess, (req, res) => {
   res.status(200).send(`${lines.join('\n')}\n`);
 });
 
-// Routes
-app.use('/api/stores', storeRoutes);
-app.use('/api/purchase-orders', purchaseOrdersRoutes);
-app.use('/api/purchases', purchaseOrdersRoutes);
-app.use('/api/transfers', transferRoutes);
-app.use('/api/orders', storeOrdersRoutes);
+// Routes - Mount with logging for debugging
+console.log('📦 Mounting API routes...');
+
+try {
+  app.use('/api/stores', storeRoutes);
+  console.log('✅ Mounted /api/stores');
+} catch (err) {
+  console.error('❌ Failed to mount /api/stores:', err);
+}
+
+try {
+  app.use('/api/purchase-orders', purchaseOrdersRoutes);
+  console.log('✅ Mounted /api/purchase-orders');
+} catch (err) {
+  console.error('❌ Failed to mount /api/purchase-orders:', err);
+}
+
+try {
+  app.use('/api/purchases', purchaseOrdersRoutes);
+  console.log('✅ Mounted /api/purchases');
+} catch (err) {
+  console.error('❌ Failed to mount /api/purchases:', err);
+}
+
+try {
+  app.use('/api/transfers', transferRoutes);
+  console.log('✅ Mounted /api/transfers');
+} catch (err) {
+  console.error('❌ Failed to mount /api/transfers:', err);
+}
+
+try {
+  app.use('/api/orders', storeOrdersRoutes);
+  console.log('✅ Mounted /api/orders');
+} catch (err) {
+  console.error('❌ Failed to mount /api/orders:', err);
+}
+
+console.log('📦 API routes mounted successfully');
+
+// Test endpoint for diagnostics
+app.get('/api/test', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'API is working correctly',
+    timestamp: new Date().toISOString(),
+    nodeEnv: process.env.NODE_ENV || 'development'
+  });
+});
+
+// Health endpoint with detailed diagnostics
+app.get('/api/health', (req, res) => {
+  const dbConnected = mongoose.connection.readyState === 1;
+  const storeModelLoaded = !!Store;
+  
+  res.status(dbConnected && storeModelLoaded ? 200 : 503).json({
+    success: true,
+    message: 'Health check',
+    timestamp: new Date().toISOString(),
+    database: {
+      connected: dbConnected,
+      readyState: mongoose.connection.readyState
+    },
+    models: {
+      Store: storeModelLoaded,
+      Machine: !!Machine,
+      SparePart: !!SparePart,
+      Order: !!Order,
+      PurchaseOrder: !!PurchaseOrder,
+      Transfer: !!Transfer
+    },
+    endpoints: {
+      test: '/api/test',
+      health: '/api/health',
+      stores: '/api/stores',
+      transfers: '/api/transfers',
+      purchases: '/api/purchases'
+    }
+  });
+});
 
 // Alerts placeholder + fallback
 app.get('/api/alerts', (req, res) => {
@@ -1044,15 +1105,28 @@ app.use(errorHandler);
 if (require.main === module) {
   const server = app.listen(PORT, '0.0.0.0', () => {
     const actualPort = server.address().port;
-    console.log(`✅ Server running on port ${actualPort}`);
-    console.log(`Test: http://localhost:${actualPort}/api/test`);
+    console.log('\n' + '='.repeat(60));
+    console.log('✅ CarterA++ Backend Server Started');
+    console.log('='.repeat(60));
+    console.log(`🚀 Server running on port: ${actualPort}`);
+    console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log('\n📋 Available Endpoints:');
+    console.log(`   Health:       GET  http://localhost:${actualPort}/api/health`);
+    console.log(`   Test:         GET  http://localhost:${actualPort}/api/test`);
+    console.log(`   Stores:       GET  http://localhost:${actualPort}/api/stores`);
+    console.log(`   Transfers:    GET  http://localhost:${actualPort}/api/transfers`);
+    console.log(`   Purchases:    GET  http://localhost:${actualPort}/api/purchases`);
+    console.log(`   Orders:       GET  http://localhost:${actualPort}/api/orders-list`);
+    console.log(`   Metrics:      GET  http://localhost:${actualPort}/api/metrics`);
+    console.log('='.repeat(60) + '\n');
   });
 
   server.on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
-      console.log(`Port ${PORT} in use - exiting to allow restart`);
+      console.error(`❌ Port ${PORT} already in use - exiting to allow restart`);
       process.exit(1);
     }
+    console.error('❌ Server error:', err);
   });
 }
 
