@@ -2,16 +2,17 @@ import axios from "axios";
 
 export const API = import.meta.env.VITE_API_URL;
 
-const ensureApiRoot = (rawValue) => {
+const ensureApiOrigin = (rawValue) => {
   const raw = String(rawValue || "").trim();
   if (!raw) {
-    return "";
+    return "https://carter-a.onrender.com";
   }
 
   if (!/^https?:\/\//i.test(raw)) {
-    const normalized = raw.endsWith("/") ? raw.slice(0, -1) : raw;
-    if (!normalized || normalized === "/") return "";
-    return normalized.replace(/\/api$/i, "");
+    console.warn("VITE_API_URL should be an absolute URL. Falling back to Render backend.", {
+      provided: raw,
+    });
+    return "https://carter-a.onrender.com";
   }
 
   try {
@@ -19,16 +20,11 @@ const ensureApiRoot = (rawValue) => {
     parsed.pathname = parsed.pathname.replace(/\/+$/, "").replace(/\/api$/i, "");
     return parsed.toString().replace(/\/+$/, "");
   } catch {
-    return raw.endsWith("/") ? raw.slice(0, -1).replace(/\/api$/i, "") : raw.replace(/\/api$/i, "");
+    console.warn("Invalid VITE_API_URL. Falling back to Render backend.", {
+      provided: raw,
+    });
+    return "https://carter-a.onrender.com";
   }
-};
-
-const resolveApiRoot = () => {
-  if (typeof window !== "undefined" && /(^|\.)vercel\.app$/i.test(window.location.hostname)) {
-    return "";
-  }
-
-  return ensureApiRoot(API);
 };
 
 const readTokenFromStorage = () => {
@@ -75,10 +71,11 @@ const readTokenFromStorage = () => {
   return "";
 };
 
-export const API_BASE_URL = resolveApiRoot();
+export const API_BASE_URL = ensureApiOrigin(API);
+export const API_ROOT = `${API_BASE_URL}/api`;
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_ROOT,
 });
 
 api.interceptors.request.use((config) => {
@@ -144,7 +141,7 @@ const unwrapArray = (value, fallbackKeys = []) => {
 
 export const getStores = async () => {
   try {
-    const response = await api.get("/api/stores");
+    const response = await api.get("/stores");
     const normalized = normalizeResult(response);
     return {
       ...normalized,
@@ -157,7 +154,7 @@ export const getStores = async () => {
 
 export const addStore = async (payload) => {
   try {
-    const response = await api.post("/api/stores", payload);
+    const response = await api.post("/stores", payload);
     const normalized = normalizeResult(response);
     return {
       ...normalized,
@@ -170,7 +167,7 @@ export const addStore = async (payload) => {
 
 export const updateStore = async (id, payload) => {
   try {
-    const response = await api.put(`/api/stores/${id}`, payload);
+    const response = await api.put(`/stores/${id}`, payload);
     const normalized = normalizeResult(response);
     return {
       ...normalized,
@@ -183,7 +180,7 @@ export const updateStore = async (id, payload) => {
 
 export const deleteStore = async (id) => {
   try {
-    const response = await api.delete(`/api/stores/${id}`);
+    const response = await api.delete(`/stores/${id}`);
     return normalizeResult(response);
   } catch (error) {
     return normalizeError(error);
@@ -192,7 +189,7 @@ export const deleteStore = async (id) => {
 
 export const getMachinesByStore = async (storeId) => {
   try {
-    const response = await api.get(`/api/stores/${storeId}/machines`);
+    const response = await api.get(`/stores/${storeId}/machines`);
     const normalized = normalizeResult(response);
     return {
       ...normalized,
@@ -200,7 +197,7 @@ export const getMachinesByStore = async (storeId) => {
     };
   } catch (firstError) {
     try {
-      const fallback = await api.get("/api/machines", { params: { storeId } });
+      const fallback = await api.get("/machines", { params: { storeId } });
       const normalized = normalizeResult(fallback);
       return {
         ...normalized,
@@ -214,7 +211,7 @@ export const getMachinesByStore = async (storeId) => {
 
 export const createMachine = async (payload) => {
   try {
-    const response = await api.post("/api/machines", payload);
+    const response = await api.post("/machines", payload);
     const normalized = normalizeResult(response);
     return {
       ...normalized,
@@ -227,7 +224,7 @@ export const createMachine = async (payload) => {
 
 export const deleteMachine = async (id) => {
   try {
-    const response = await api.delete(`/api/machines/${id}`);
+    const response = await api.delete(`/machines/${id}`);
     return normalizeResult(response);
   } catch (error) {
     return normalizeError(error);
@@ -236,7 +233,7 @@ export const deleteMachine = async (id) => {
 
 export const getSpareParts = async (params = {}) => {
   try {
-    const response = await api.get("/api/spares", { params });
+    const response = await api.get("/spares", { params });
     const normalized = normalizeResult(response);
     return {
       ...normalized,
@@ -249,7 +246,7 @@ export const getSpareParts = async (params = {}) => {
 
 export const createSparePart = async (payload) => {
   try {
-    const response = await api.post("/api/spares", payload);
+    const response = await api.post("/spares", payload);
     const normalized = normalizeResult(response);
     return {
       ...normalized,
@@ -262,7 +259,7 @@ export const createSparePart = async (payload) => {
 
 export const updateSparePart = async (id, payload) => {
   try {
-    const response = await api.put(`/api/spares/${id}`, payload);
+    const response = await api.put(`/spares/${id}`, payload);
     const normalized = normalizeResult(response);
     return {
       ...normalized,
@@ -275,7 +272,7 @@ export const updateSparePart = async (id, payload) => {
 
 export const deleteSparePart = async (id) => {
   try {
-    const response = await api.delete(`/api/spares/${id}`);
+    const response = await api.delete(`/spares/${id}`);
     return normalizeResult(response);
   } catch (error) {
     return normalizeError(error);
@@ -284,7 +281,7 @@ export const deleteSparePart = async (id) => {
 
 export const getAlerts = async () => {
   try {
-    const response = await api.get("/api/alerts");
+    const response = await api.get("/alerts");
     const normalized = normalizeResult(response);
     return {
       ...normalized,
@@ -296,7 +293,7 @@ export const getAlerts = async () => {
     }
 
     try {
-      const fallback = await api.get("/api/inventory/alerts");
+      const fallback = await api.get("/inventory/alerts");
       const normalized = normalizeResult(fallback);
       return {
         ...normalized,
@@ -310,7 +307,7 @@ export const getAlerts = async () => {
 
 export const getOrders = async (params = {}) => {
   try {
-    const response = await api.get("/api/orders", { params });
+    const response = await api.get("/orders", { params });
     const normalized = normalizeResult(response);
     return {
       ...normalized,
@@ -323,7 +320,7 @@ export const getOrders = async (params = {}) => {
     }
 
     try {
-      const fallback = await api.get("/api/orders-list", { params });
+      const fallback = await api.get("/orders-list", { params });
       const normalized = normalizeResult(fallback);
       return {
         ...normalized,
@@ -338,7 +335,7 @@ export const getOrders = async (params = {}) => {
 
 export const createOrder = async (payload) => {
   try {
-    const response = await api.post("/api/orders", payload);
+    const response = await api.post("/orders", payload);
     const normalized = normalizeResult(response);
     return {
       ...normalized,
@@ -350,7 +347,7 @@ export const createOrder = async (payload) => {
     }
 
     try {
-      const fallback = await api.post("/api/orders-list", payload);
+      const fallback = await api.post("/orders-list", payload);
       const normalized = normalizeResult(fallback);
       return {
         ...normalized,
@@ -364,7 +361,7 @@ export const createOrder = async (payload) => {
 
 export const deleteOrder = async (id) => {
   try {
-    const response = await api.delete(`/api/orders/${id}`);
+    const response = await api.delete(`/orders/${id}`);
     return normalizeResult(response);
   } catch (firstError) {
     if (!isNotFoundError(firstError)) {
@@ -372,7 +369,7 @@ export const deleteOrder = async (id) => {
     }
 
     try {
-      const fallback = await api.delete(`/api/orders-list/${id}`);
+      const fallback = await api.delete(`/orders-list/${id}`);
       return normalizeResult(fallback);
     } catch (error) {
       return normalizeError(error || firstError);
@@ -382,7 +379,7 @@ export const deleteOrder = async (id) => {
 
 export const getPurchaseOrders = async (params = {}) => {
   try {
-    const response = await api.get("/api/purchase-orders", { params });
+    const response = await api.get("/purchase-orders", { params });
     const normalized = normalizeResult(response);
     return {
       ...normalized,
@@ -395,7 +392,7 @@ export const getPurchaseOrders = async (params = {}) => {
 
 export const createPurchaseOrder = async (payload) => {
   try {
-    const response = await api.post("/api/purchase-orders", payload);
+    const response = await api.post("/purchase-orders", payload);
     const normalized = normalizeResult(response);
     return {
       ...normalized,
@@ -408,7 +405,7 @@ export const createPurchaseOrder = async (payload) => {
 
 export const deletePurchaseOrder = async (id) => {
   try {
-    const response = await api.delete(`/api/purchase-orders/${id}`);
+    const response = await api.delete(`/purchase-orders/${id}`);
     return normalizeResult(response);
   } catch (error) {
     return normalizeError(error);
@@ -417,7 +414,7 @@ export const deletePurchaseOrder = async (id) => {
 
 export const getTransfers = async (params = {}) => {
   try {
-    const response = await api.get("/api/transfers", { params });
+    const response = await api.get("/transfers", { params });
     const normalized = normalizeResult(response);
     return {
       ...normalized,
@@ -435,7 +432,7 @@ export const getIncomingTransfers = async (params = {}) => {
 
 export const getTransferStats = async (params = {}) => {
   try {
-    const response = await api.get("/api/transfers/stats", { params });
+    const response = await api.get("/transfers/stats", { params });
     return normalizeResult(response);
   } catch (error) {
     return normalizeError(error);
@@ -444,7 +441,7 @@ export const getTransferStats = async (params = {}) => {
 
 export const createTransfer = async (payload) => {
   try {
-    const response = await api.post("/api/transfers", payload);
+    const response = await api.post("/transfers", payload);
     const normalized = normalizeResult(response);
     return {
       ...normalized,
@@ -465,7 +462,7 @@ export const createIncomingTransfer = async (payload) => {
 
 export const markTransferReceived = async (id, payload = {}) => {
   try {
-    const response = await api.patch(`/api/transfers/${id}/receive`, payload);
+    const response = await api.patch(`/transfers/${id}/receive`, payload);
     const normalized = normalizeResult(response);
     return {
       ...normalized,
@@ -473,7 +470,7 @@ export const markTransferReceived = async (id, payload = {}) => {
     };
   } catch (firstError) {
     try {
-      const fallback = await api.patch(`/api/transfers/${id}/mark-received`, payload);
+      const fallback = await api.patch(`/transfers/${id}/mark-received`, payload);
       const normalized = normalizeResult(fallback);
       return {
         ...normalized,
@@ -491,7 +488,7 @@ export const getStoreOrders = async (storeId) => {
 
 export const confirmStoreOrderReceive = async (id, payload = {}) => {
   try {
-    const response = await api.patch(`/api/orders/${id}/confirm-receive`, payload);
+    const response = await api.patch(`/orders/${id}/confirm-receive`, payload);
     return normalizeResult(response);
   } catch (error) {
     return normalizeError(error);
@@ -500,7 +497,7 @@ export const confirmStoreOrderReceive = async (id, payload = {}) => {
 
 export const confirmStoreOrderDispatch = async (id, payload = {}) => {
   try {
-    const response = await api.patch(`/api/orders/${id}/confirm-dispatch`, payload);
+    const response = await api.patch(`/orders/${id}/confirm-dispatch`, payload);
     return normalizeResult(response);
   } catch (error) {
     return normalizeError(error);

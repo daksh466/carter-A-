@@ -56,7 +56,7 @@ const LogisticsFormDrawer = ({ isOpen, onClose, mode = 'transfer', onSuccess }) 
         payload.isInstant = false;
       }
 
-      await api.post('/api/transfers', payload);
+      await api.post('/transfers', payload);
       onSuccess();
       onClose();
     } catch (error) {
