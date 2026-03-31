@@ -12,14 +12,16 @@ const notFound = require('./src/middlewares/notFound');
 const errorHandler = require('./src/middlewares/errorHandler');
 const requestId = require('./src/middlewares/requestId');
 const userRoutes = require('./src/routes/userRoutes');
-const orderRoutes = require('./src/routes/orderRoutes');
-const inventoryRoutes = require('./src/routes/inventoryRoutes');
-const machineRoutes = require('./src/routes/machineRoutes');
+const orderRoutes = require('./backend/src/routes/ordersRoutes');
+const inventoryRoutes = require('./backend/src/routes/inventoryRoutes');
+const machineRoutes = require('./backend/src/routes/machinesRoutes');
 const paymentRoutes = require('./src/routes/paymentRoutes');
-const sparePartRoutes = require('./src/routes/sparePartRoutes');
+const sparePartRoutes = require('./backend/src/routes/sparePartsRoutes');
 const serviceRoutes = require('./src/routes/serviceRoutes');
 const connectionRoutes = require('./src/routes/connectionRoutes');
-const healthRoutes = require('./src/routes/healthRoutes');
+const healthRoutes = require('./backend/src/routes/healthRoutes');
+const alertRoutes = require('./backend/src/routes/alertRoutes');
+const purchaseOrdersRoutes = require('./backend/src/routes/purchaseOrdersRoutes');
 const storeRoutes = require('./backend/src/routes/storeRoutes');
 const Store = require('./backend/models/Store');
 const connectDB = require('./config/db');
@@ -95,6 +97,8 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/spareparts', sparePartRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/connections', connectionRoutes);
+app.use('/api/alerts', alertRoutes);
+app.use('/api/purchase-orders', purchaseOrdersRoutes);
 app.get('/api/stores', async (req, res) => {
   try {
     if (!Store) {
