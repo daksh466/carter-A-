@@ -45,27 +45,27 @@ const ShipmentReceiveModal = ({
             className="fixed inset-0 z-[80] flex items-center justify-center p-3"
             onClick={onClose}
           >
-            <div className="max-w-lg w-full rounded-2xl border border-sky-200/20 bg-[radial-gradient(circle_at_80%_0%,rgba(56,189,248,0.16),transparent_36%),linear-gradient(160deg,#08152d_0%,#0b1d3c_55%,#0a1730_100%)] shadow-[0_25px_60px_rgba(3,8,24,0.58)]" onClick={(event) => event.stopPropagation()}>
+            <div className="w-full max-w-lg rounded-2xl border border-gray-200 bg-white shadow-2xl transition-colors duration-300 dark:border-sky-200/20 dark:bg-[radial-gradient(circle_at_80%_0%,rgba(56,189,248,0.16),transparent_36%),linear-gradient(160deg,#08152d_0%,#0b1d3c_55%,#0a1730_100%)]" onClick={(event) => event.stopPropagation()}>
               <form id={formId} onSubmit={onSubmit} className="flex max-h-[90vh] flex-col">
-                <div className="sticky top-0 z-10 border-b border-sky-200/20 bg-slate-950/45 px-6 py-4 backdrop-blur">
-                  <h3 className="text-xl font-semibold text-white">{title}</h3>
-                  <p className="mt-1 text-sm text-slate-300">{subtitle}</p>
+                <div className="sticky top-0 z-10 border-b border-gray-200 bg-white/90 px-6 py-4 backdrop-blur transition-colors duration-300 dark:border-sky-200/20 dark:bg-slate-950/45">
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{title}</h3>
+                  <p className="mt-1 text-sm text-gray-600 dark:text-slate-300">{subtitle}</p>
                 </div>
 
                 <div className="max-h-[90vh] overflow-y-auto px-6 py-4">
                   <div className="space-y-4">
-                    <div className="rounded-lg border border-sky-300/20 bg-slate-900/35 p-3 text-sm text-slate-200">
-                      <div className="font-semibold text-white">{summaryTitle || 'Shipment'}</div>
-                      <div className="mt-1 text-xs text-slate-400">{summaryItems || 'Shipment items'}</div>
+                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700 transition-colors duration-300 dark:border-sky-300/20 dark:bg-slate-900/35 dark:text-slate-200">
+                      <div className="font-semibold text-gray-900 dark:text-white">{summaryTitle || 'Shipment'}</div>
+                      <div className="mt-1 text-xs text-gray-600 dark:text-slate-400">{summaryItems || 'Shipment items'}</div>
                     </div>
 
                     {shipmentOptions.length > 0 && onSelectedShipmentChange && (
                       <label className="block space-y-1">
-                        <span className="text-sm font-medium text-slate-200">Select Shipment</span>
+                        <span className="text-sm font-medium text-gray-700 dark:text-slate-200">Select Shipment</span>
                         <select
                           value={selectedShipmentId}
                           onChange={(event) => onSelectedShipmentChange(event.target.value)}
-                          className="w-full rounded-lg border border-sky-300/20 bg-slate-900/45 px-3 py-2 text-sm text-slate-100 focus:border-sky-300/60 focus:ring-2 focus:ring-sky-300/20 focus:outline-none"
+                          className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none dark:border-sky-300/20 dark:bg-slate-900/45 dark:text-slate-100 dark:focus:border-sky-300/60"
                         >
                           <option value="">Select a shipment</option>
                           {shipmentOptions.map((option) => (
@@ -78,33 +78,33 @@ const ShipmentReceiveModal = ({
                     )}
 
                     <label className="block space-y-1">
-                      <span className="text-sm font-medium text-slate-200">{receivedByLabel}</span>
+                      <span className="text-sm font-medium text-gray-700 dark:text-slate-200">{receivedByLabel}</span>
                       <input
                         type="text"
                         value={receivedBy}
                         onChange={(event) => onReceivedByChange(event.target.value)}
                         required
-                        className="w-full rounded-lg border border-sky-300/20 bg-slate-900/45 px-3 py-2 text-sm text-slate-100 focus:border-sky-300/60 focus:ring-2 focus:ring-sky-300/20 focus:outline-none"
+                        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none dark:border-sky-300/20 dark:bg-slate-900/45 dark:text-slate-100 dark:focus:border-sky-300/60"
                       />
                     </label>
 
                     <label className="block space-y-1">
-                      <span className="text-sm font-medium text-slate-200">{receivedDateLabel}</span>
+                      <span className="text-sm font-medium text-gray-700 dark:text-slate-200">{receivedDateLabel}</span>
                       <input
                         type="date"
                         value={receivedDate}
                         onChange={(event) => onReceivedDateChange(event.target.value)}
-                        className="w-full rounded-lg border border-sky-300/20 bg-slate-900/45 px-3 py-2 text-sm text-slate-100 focus:border-sky-300/60 focus:ring-2 focus:ring-sky-300/20 focus:outline-none"
+                        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none dark:border-sky-300/20 dark:bg-slate-900/45 dark:text-slate-100 dark:focus:border-sky-300/60"
                       />
                     </label>
 
                     <label className="block space-y-1">
-                      <span className="text-sm font-medium text-slate-200">{notesLabel}</span>
+                      <span className="text-sm font-medium text-gray-700 dark:text-slate-200">{notesLabel}</span>
                       <textarea
                         value={notes}
                         onChange={(event) => onNotesChange(event.target.value)}
                         rows={3}
-                        className="w-full resize-y rounded-lg border border-sky-300/20 bg-slate-900/45 px-3 py-2 text-sm text-slate-100 focus:border-sky-300/60 focus:ring-2 focus:ring-sky-300/20 focus:outline-none"
+                        className="w-full resize-y rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none dark:border-sky-300/20 dark:bg-slate-900/45 dark:text-slate-100 dark:focus:border-sky-300/60"
                       />
                     </label>
 
@@ -116,7 +116,7 @@ const ShipmentReceiveModal = ({
                   </div>
                 </div>
 
-                <div className="sticky bottom-0 z-10 flex justify-end gap-3 border-t border-sky-200/20 bg-slate-950/55 px-6 py-4 backdrop-blur">
+                <div className="sticky bottom-0 z-10 flex justify-end gap-3 border-t border-gray-200 bg-white/90 px-6 py-4 backdrop-blur transition-colors duration-300 dark:border-sky-200/20 dark:bg-slate-950/55">
                   <button
                     type="button"
                     onClick={onClose}

@@ -93,11 +93,11 @@ const LogisticsFormDrawer = ({ isOpen, onClose, mode = 'transfer', onSuccess }) 
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', bounce: 0 }}
-            className="absolute right-0 top-0 h-full w-96 bg-white shadow-2xl border-l"
+            className="absolute right-0 top-0 h-full w-96 border-l border-gray-200 bg-white shadow-2xl transition-colors duration-300 dark:border-gray-700 dark:bg-gray-900"
             onClick={e => e.stopPropagation()}
           >
-            <div className="p-6 border-b flex justify-between items-center">
-              <h2 className="text-xl font-bold">
+            <div className="flex items-center justify-between border-b border-gray-200 p-6 transition-colors duration-300 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                 New {mode === 'transfer' ? 'Instant Transfer' : 'Shipment'}
               </h2>
               <Button variant="ghost" size="sm" onClick={onClose}>
@@ -105,7 +105,7 @@ const LogisticsFormDrawer = ({ isOpen, onClose, mode = 'transfer', onSuccess }) 
               </Button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto max-h-[calc(100vh-120px)]">
+            <form onSubmit={handleSubmit} className="max-h-[calc(100vh-120px)] space-y-6 overflow-y-auto p-6">
               <div>
                 <Label className="text-sm font-medium">From Store</Label>
                 <Select value={formData.fromStoreId} onValueChange={(v) => setFormData(prev => ({ ...prev, fromStoreId: v }))}>

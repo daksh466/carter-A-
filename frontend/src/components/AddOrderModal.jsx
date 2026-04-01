@@ -145,14 +145,14 @@ export default function AddOrderModal({ isOpen, onClose, onSuccess }) {
             animate={{ x: 0, opacity: 1, scale: 1 }}
             exit={{ x: '100%', opacity: 0.7, scale: 0.98 }}
             transition={{ type: 'spring', stiffness: 400, damping: 38 }}
-            className="fixed top-0 right-0 h-full w-full sm:w-[480px] max-w-full z-50 bg-gray-950 shadow-2xl flex flex-col"
+            className="fixed top-0 right-0 z-50 flex h-full w-full max-w-full flex-col bg-white shadow-2xl transition-colors duration-300 sm:w-[480px] dark:bg-gray-950"
             tabIndex={-1}
           >
             {/* Sticky Header */}
-            <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-gray-950/90 border-b border-gray-800 backdrop-blur-sm">
-              <h2 className="text-lg font-bold text-white tracking-tight">Create Order</h2>
-              <button onClick={onClose} className="p-2 rounded hover:bg-gray-800 transition">
-                <X className="w-5 h-5 text-gray-300" />
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white/90 px-6 py-4 backdrop-blur-sm transition-colors duration-300 dark:border-gray-800 dark:bg-gray-950/90">
+              <h2 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">Create Order</h2>
+              <button onClick={onClose} className="rounded p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">
+                <X className="h-5 w-5 text-gray-700 dark:text-gray-300" />
               </button>
             </div>
             {/* Success Toast */}
@@ -181,7 +181,7 @@ export default function AddOrderModal({ isOpen, onClose, onSuccess }) {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="mb-2 p-3 bg-red-900/30 border border-red-500 rounded text-red-200 text-sm max-h-32 overflow-y-auto"
+                  className="mb-2 max-h-32 overflow-y-auto rounded border border-red-300 bg-red-50 p-3 text-sm text-red-800 dark:border-red-500 dark:bg-red-900/30 dark:text-red-200"
                 >
                   {createOrderError && <div>{createOrderError}</div>}
                   {validationErrors.map((err, idx) => (
@@ -190,54 +190,54 @@ export default function AddOrderModal({ isOpen, onClose, onSuccess }) {
                 </Motion.div>
               )}
               {/* Card: Customer Info */}
-              <div className="bg-gray-900/80 rounded-xl shadow p-5 flex flex-col gap-4">
-                <div className="text-base font-semibold text-gray-100 mb-1">Customer Info</div>
+              <div className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-md transition-colors duration-300 dark:border-gray-700 dark:bg-gray-900/80">
+                <div className="mb-1 text-base font-semibold text-gray-900 dark:text-gray-100">Customer Info</div>
                 <div className="flex flex-col gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-1">Customer Name <span className="text-red-500">*</span></label>
+                    <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-400">Customer Name <span className="text-red-500">*</span></label>
                     <input
                       type="text"
                       name="customerName"
                       value={formData.customerName}
                       onChange={handleChange}
                       placeholder="Enter customer name"
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition"
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 transition-colors duration-300 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                     />
                   </div>
                   <div className="flex gap-3">
                     <div className="flex-1">
-                      <label className="block text-xs font-medium text-gray-400 mb-1">Email</label>
+                      <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-400">Email</label>
                       <input
                         type="email"
                         name="customerEmail"
                         value={formData.customerEmail}
                         onChange={handleChange}
                         placeholder="Enter customer email"
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition"
+                        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 transition-colors duration-300 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                       />
                     </div>
                     <div className="flex-1">
-                      <label className="block text-xs font-medium text-gray-400 mb-1">Phone</label>
+                      <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-400">Phone</label>
                       <input
                         type="tel"
                         name="customerPhone"
                         value={formData.customerPhone}
                         onChange={handleChange}
                         placeholder="Enter customer phone"
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition"
+                        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 transition-colors duration-300 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                       />
                     </div>
                   </div>
                 </div>
               </div>
               {/* Card: Machines Selection */}
-              <div className="bg-gray-900/80 rounded-xl shadow p-5 flex flex-col gap-4">
-                <div className="text-base font-semibold text-gray-100 mb-1 flex items-center justify-between">
+              <div className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-md transition-colors duration-300 dark:border-gray-700 dark:bg-gray-900/80">
+                <div className="mb-1 flex items-center justify-between text-base font-semibold text-gray-900 dark:text-gray-100">
                   <span>Machines Selection</span>
                   <button
                     type="button"
                     onClick={addMachine}
-                    className="flex items-center gap-1 px-2 py-1 rounded bg-blue-900/60 text-blue-300 hover:bg-blue-800/80 hover:text-white transition text-xs font-medium"
+                    className="flex items-center gap-1 rounded bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-200 dark:bg-blue-900/60 dark:text-blue-300 dark:hover:bg-blue-800/80 dark:hover:text-white"
                   >
                     <Plus className="w-4 h-4" /> Add Machine
                   </button>
@@ -255,7 +255,7 @@ export default function AddOrderModal({ isOpen, onClose, onSuccess }) {
                       <select
                         value={machine.name}
                         onChange={(e) => handleMachineChange(index, 'name', e.target.value)}
-                        className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 transition"
+                        className="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 transition-colors duration-300 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                       >
                         <option value="">Select Machine</option>
                         {machines.map(m => (
@@ -268,13 +268,13 @@ export default function AddOrderModal({ isOpen, onClose, onSuccess }) {
                         value={machine.quantity}
                         onChange={(e) => handleMachineChange(index, 'quantity', e.target.value)}
                         placeholder="Qty"
-                        className="w-20 px-2 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition"
+                        className="w-20 rounded-lg border border-gray-300 bg-white px-2 py-2 text-gray-900 placeholder-gray-500 transition-colors duration-300 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                       />
                       {formData.machines.length > 1 && (
                         <button
                           type="button"
                           onClick={() => removeMachine(index)}
-                          className="p-2 rounded bg-red-900/60 text-red-300 hover:bg-red-800/80 hover:text-white transition"
+                          className="rounded bg-red-100 p-2 text-red-700 transition-colors hover:bg-red-200 dark:bg-red-900/60 dark:text-red-300 dark:hover:bg-red-800/80 dark:hover:text-white"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -284,12 +284,12 @@ export default function AddOrderModal({ isOpen, onClose, onSuccess }) {
                 </div>
               </div>
               {/* Card: Payment Details */}
-              <div className="bg-gray-900/80 rounded-xl shadow p-5 flex flex-col gap-4">
-                <div className="text-base font-semibold text-gray-100 mb-1">Payment Details</div>
+              <div className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-md transition-colors duration-300 dark:border-gray-700 dark:bg-gray-900/80">
+                <div className="mb-1 text-base font-semibold text-gray-900 dark:text-gray-100">Payment Details</div>
                 <div className="flex flex-col gap-3">
                   <div className="flex gap-3">
                     <div className="flex-1">
-                      <label className="block text-xs font-medium text-gray-400 mb-1">Total Amount <span className="text-red-500">*</span></label>
+                      <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-400">Total Amount <span className="text-red-500">*</span></label>
                       <input
                         type="number"
                         name="totalAmount"
@@ -297,16 +297,16 @@ export default function AddOrderModal({ isOpen, onClose, onSuccess }) {
                         onChange={handleChange}
                         min="0"
                         placeholder="Enter total amount"
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition"
+                        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 transition-colors duration-300 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                       />
                     </div>
                     <div className="flex-1">
-                      <label className="block text-xs font-medium text-gray-400 mb-1">Payment Status <span className="text-red-500">*</span></label>
+                      <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-400">Payment Status <span className="text-red-500">*</span></label>
                       <select
                         name="paymentStatus"
                         value={formData.paymentStatus}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 transition"
+                        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 transition-colors duration-300 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                       >
                         <option value="Pending">Pending</option>
                         <option value="Paid">Paid</option>
@@ -317,41 +317,41 @@ export default function AddOrderModal({ isOpen, onClose, onSuccess }) {
                   </div>
                   <div className="flex gap-3">
                     <div className="flex-1">
-                      <label className="block text-xs font-medium text-gray-400 mb-1">Verified By <span className="text-red-500">*</span></label>
+                      <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-400">Verified By <span className="text-red-500">*</span></label>
                       <input
                         type="text"
                         name="verifiedBy"
                         value={formData.verifiedBy}
                         onChange={handleChange}
                         placeholder="Enter verifier name"
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition"
+                        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 transition-colors duration-300 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                       />
                     </div>
                     <div className="flex-1">
-                      <label className="block text-xs font-medium text-gray-400 mb-1">Order Date <span className="text-red-500">*</span></label>
+                      <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-400">Order Date <span className="text-red-500">*</span></label>
                       <input
                         type="date"
                         name="orderDate"
                         value={formData.orderDate}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 transition"
+                        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 transition-colors duration-300 focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                       />
                     </div>
                   </div>
                 </div>
               </div>
               {/* Order Summary Panel */}
-              <div className="bg-gray-950/80 rounded-xl shadow p-5 flex flex-col gap-2 border border-gray-800">
-                <div className="text-base font-semibold text-gray-100 mb-1">Order Summary</div>
-                <div className="flex items-center justify-between text-sm text-gray-300">
+              <div className="flex flex-col gap-2 rounded-xl border border-gray-200 bg-gray-50 p-5 shadow-sm transition-colors duration-300 dark:border-gray-800 dark:bg-gray-950/80">
+                <div className="mb-1 text-base font-semibold text-gray-900 dark:text-gray-100">Order Summary</div>
+                <div className="flex items-center justify-between text-sm text-gray-700 dark:text-gray-300">
                   <span>Total Machines</span>
                   <span className="font-bold">{formData.machines.length}</span>
                 </div>
-                <div className="flex items-center justify-between text-sm text-gray-300">
+                <div className="flex items-center justify-between text-sm text-gray-700 dark:text-gray-300">
                   <span>Total Price</span>
                   <span className="font-bold">₹{formData.totalAmount || 0}</span>
                 </div>
-                <div className="flex items-center justify-between text-sm text-gray-300">
+                <div className="flex items-center justify-between text-sm text-gray-700 dark:text-gray-300">
                   <span>Payment Status</span>
                   <span className="font-bold">{formData.paymentStatus}</span>
                 </div>
@@ -359,11 +359,11 @@ export default function AddOrderModal({ isOpen, onClose, onSuccess }) {
               <div className="h-24" /> {/* Spacer for sticky footer */}
             </form>
             {/* Sticky Footer */}
-            <div className="sticky bottom-0 z-20 w-full bg-gradient-to-t from-gray-950/95 to-gray-950/60 px-6 py-4 border-t border-gray-800 flex gap-3">
+            <div className="sticky bottom-0 z-20 flex w-full gap-3 border-t border-gray-200 bg-gradient-to-t from-gray-100/95 to-white/70 px-6 py-4 transition-colors duration-300 dark:border-gray-800 dark:from-gray-950/95 dark:to-gray-950/60">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-2 rounded-lg bg-gray-800 text-gray-200 hover:bg-gray-700 transition font-medium"
+                className="flex-1 rounded-lg bg-gray-200 px-4 py-2 font-medium text-gray-800 transition-colors hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                 disabled={createOrderLoading}
               >
                 Cancel

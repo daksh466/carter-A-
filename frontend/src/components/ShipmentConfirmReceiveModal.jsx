@@ -96,17 +96,17 @@ export default function ShipmentConfirmReceiveModal({
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
-            <div className="w-full max-w-md rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 shadow-2xl">
-              <div className="border-b border-white/10 px-6 py-5 flex items-center justify-between">
+            <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white shadow-2xl transition-colors duration-300 dark:border-white/10 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
+              <div className="flex items-center justify-between border-b border-gray-200 px-6 py-5 dark:border-white/10">
                 <div>
-                  <h2 className="text-xl font-bold text-white">{modalTitle}</h2>
-                  <p className="mt-1 text-xs text-slate-300">{modalSubtitle}</p>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">{modalTitle}</h2>
+                  <p className="mt-1 text-xs text-gray-600 dark:text-slate-300">{modalSubtitle}</p>
                 </div>
                 <button
                   type="button"
                   onClick={onClose}
                   disabled={loading}
-                  className="rounded-lg p-2 hover:bg-white/10 disabled:opacity-50"
+                    className="rounded-lg p-2 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-white/10"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -120,7 +120,7 @@ export default function ShipmentConfirmReceiveModal({
                 )}
 
                 <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-100">
+                  <label className="mb-2 block text-sm font-semibold text-gray-800 dark:text-slate-100">
                     Shipment Details
                   </label>
                   <div className="rounded-xl border border-white/10 bg-white/5 p-4 space-y-2">
@@ -161,7 +161,7 @@ export default function ShipmentConfirmReceiveModal({
                     onChange={(e) => setApproverName(e.target.value)}
                     placeholder="Enter your name"
                     disabled={loading}
-                    className="w-full rounded-xl border border-white/10 bg-white/10 px-4 py-2.5 text-white placeholder-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50"
+                    className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none disabled:opacity-50 dark:border-white/10 dark:bg-white/10 dark:text-white dark:placeholder-slate-400"
                   />
                 </div>
 
@@ -177,7 +177,7 @@ export default function ShipmentConfirmReceiveModal({
                 </label>
 
                 <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-100">
+                  <label className="mb-2 block text-sm font-semibold text-gray-800 dark:text-slate-100">
                     Notes (Optional)
                   </label>
                   <textarea
@@ -186,7 +186,7 @@ export default function ShipmentConfirmReceiveModal({
                     placeholder="Add any additional notes..."
                     disabled={loading}
                     rows={3}
-                    className="w-full rounded-xl border border-white/10 bg-white/10 px-4 py-2.5 text-white placeholder-slate-400 resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50"
+                    className="w-full resize-none rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none disabled:opacity-50 dark:border-white/10 dark:bg-white/10 dark:text-white dark:placeholder-slate-400"
                   />
                 </div>
 

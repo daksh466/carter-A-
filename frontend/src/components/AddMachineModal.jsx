@@ -11,6 +11,7 @@ export default function AddMachineModal({ isOpen, onClose, onSuccess }) {
     warranty_expiry_date: ''
   });
   const [validationErrors, setValidationErrors] = useState([]);
+  const inputClass = "w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 transition-colors duration-300 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100";
 
   // Always sync store_id to first available store if stores change
   React.useEffect(() => {
@@ -79,12 +80,12 @@ export default function AddMachineModal({ isOpen, onClose, onSuccess }) {
   if (!isOpen) return null;
   if (!stores || stores.length === 0) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-gray-900 rounded-lg p-6 w-full max-w-md shadow-lg">
-          <h2 className="text-xl font-bold text-white mb-4">Add New Machine</h2>
-          <div className="text-red-200">No data available. Please add a store first.</div>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+        <div className="w-full max-w-md rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-colors duration-300 dark:border-gray-700 dark:bg-gray-800">
+          <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-gray-100">Add New Machine</h2>
+          <div className="text-red-700 dark:text-red-300">No data available. Please add a store first.</div>
           <div className="flex gap-3 pt-4">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition">Close</button>
+            <button type="button" onClick={onClose} className="flex-1 rounded-lg bg-gray-700 px-4 py-2 text-white transition-colors hover:bg-gray-600">Close</button>
           </div>
         </div>
       </div>
@@ -92,12 +93,12 @@ export default function AddMachineModal({ isOpen, onClose, onSuccess }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-gray-900 rounded-lg p-6 w-full max-w-md shadow-lg">
-        <h2 className="text-xl font-bold text-white mb-4">Add New Machine</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+      <div className="w-full max-w-md rounded-xl border border-gray-200 bg-white p-6 shadow-lg transition-colors duration-300 dark:border-gray-700 dark:bg-gray-800">
+        <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-gray-100">Add New Machine</h2>
         
         {(createMachineError || validationErrors.length > 0) && (
-          <div className="mb-4 p-3 bg-red-900 bg-opacity-20 border border-red-500 rounded text-red-200 text-sm">
+          <div className="mb-4 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-800 dark:border-red-700 dark:bg-red-900/30 dark:text-red-200">
             {createMachineError && <div>{createMachineError}</div>}
             {validationErrors.map((err, idx) => (
               <div key={idx}>• {err}</div>
@@ -108,7 +109,7 @@ export default function AddMachineModal({ isOpen, onClose, onSuccess }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Machine Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Machine Name
             </label>
             <input
@@ -117,20 +118,20 @@ export default function AddMachineModal({ isOpen, onClose, onSuccess }) {
               value={formData.name}
               onChange={handleChange}
                 placeholder="Enter machine name"
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className={inputClass}
             />
           </div>
 
           {/* Store */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Store <span className="text-red-400">*</span>
             </label>
             <select
               name="store_id"
               value={formData.store_id}
               onChange={handleChange}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+              className={inputClass}
               required
             >
               <option value="" disabled>
@@ -146,7 +147,7 @@ export default function AddMachineModal({ isOpen, onClose, onSuccess }) {
 
           {/* Quantity Available */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Quantity Available
             </label>
             <input
@@ -156,13 +157,13 @@ export default function AddMachineModal({ isOpen, onClose, onSuccess }) {
               onChange={handleChange}
               min="0"
               placeholder="e.g., 5"
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className={inputClass}
             />
           </div>
 
           {/* Minimum Required */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Minimum Required
             </label>
             <input
@@ -172,13 +173,13 @@ export default function AddMachineModal({ isOpen, onClose, onSuccess }) {
               onChange={handleChange}
               min="0"
               placeholder="e.g., 3"
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className={inputClass}
             />
           </div>
 
           {/* Warranty Expiry Date */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Warranty Expiry Date (Optional)
             </label>
             <input
@@ -186,7 +187,7 @@ export default function AddMachineModal({ isOpen, onClose, onSuccess }) {
               name="warranty_expiry_date"
               value={formData.warranty_expiry_date}
               onChange={handleChange}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-blue-500"
+              className={inputClass}
             />
           </div>
 
@@ -195,14 +196,14 @@ export default function AddMachineModal({ isOpen, onClose, onSuccess }) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition"
+              className="flex-1 rounded-lg bg-gray-700 px-4 py-2 text-white transition-colors hover:bg-gray-600"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={createMachineLoading}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition disabled:opacity-50"
+              className="flex-1 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
             >
               {createMachineLoading ? 'Creating...' : 'Add Machine'}
             </button>

@@ -261,14 +261,14 @@ const NewTransferDrawer = ({
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', stiffness: 260, damping: 30 }}
-            className="fixed inset-y-0 right-0 z-50 w-full bg-slate-950 text-slate-100 shadow-2xl"
+            className="fixed inset-y-0 right-0 z-50 w-full bg-slate-100 text-slate-900 shadow-2xl transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100"
           >
             <div className="flex h-full flex-col">
-              <div className="border-b border-slate-800 px-5 py-4 sm:px-8">
+              <div className="border-b border-slate-200 bg-white/80 px-5 py-4 transition-colors duration-300 dark:border-slate-800 dark:bg-transparent sm:px-8">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <h2 className="text-2xl font-bold">Inter-Store Transfer</h2>
-                    <p className="mt-1 text-sm text-slate-300">Move stock instantly or send it as an in-transit shipment.</p>
+                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Move stock instantly or send it as an in-transit shipment.</p>
                   </div>
                   <button
                     type="button"
@@ -290,7 +290,7 @@ const NewTransferDrawer = ({
                 )}
 
                 <div className="space-y-4">
-                  <section className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+                  <section className="rounded-2xl border border-slate-200 bg-white p-4 transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900/60">
                     <h3 className="mb-3 text-base font-semibold">Transfer Details</h3>
                     <div className="grid gap-3 md:grid-cols-2">
                       <label className="text-sm">
@@ -298,7 +298,7 @@ const NewTransferDrawer = ({
                         <select
                           value={form.fromStoreId}
                           disabled
-                          className="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100"
+                          className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 transition-colors duration-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
                         >
                           <option value="">Select store</option>
                           {stores.map((store) => {
@@ -313,7 +313,7 @@ const NewTransferDrawer = ({
                         <select
                           value={form.toStoreId}
                           onChange={(event) => updateForm({ toStoreId: event.target.value })}
-                          className="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100"
+                          className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 transition-colors duration-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
                         >
                           <option value="">Select destination store</option>
                           {destinationStores.map((store) => {
@@ -326,7 +326,7 @@ const NewTransferDrawer = ({
 
                     <div className="mt-4">
                       <span className="mb-1 block text-sm text-slate-300">Transfer Type</span>
-                      <div className="inline-flex rounded-lg border border-slate-700 bg-slate-900 p-1 text-sm">
+                      <div className="inline-flex rounded-lg border border-slate-300 bg-white p-1 text-sm transition-colors duration-300 dark:border-slate-700 dark:bg-slate-900">
                         <button
                           type="button"
                           onClick={() => updateForm({ transferType: 'instant' })}
@@ -345,7 +345,7 @@ const NewTransferDrawer = ({
                     </div>
                   </section>
 
-                  <section className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+                  <section className="rounded-2xl border border-slate-200 bg-white p-4 transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900/60">
                     <div className="mb-2 flex items-center justify-between">
                       <h3 className="text-base font-semibold">Items</h3>
                       <button
