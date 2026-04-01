@@ -218,6 +218,20 @@ export const loginUser = async ({ username, password }) => {
   }
 };
 
+export const registerUser = async ({ username, password, businessName, phone }) => {
+  try {
+    const response = await api.post("/users/register", {
+      username,
+      password,
+      businessName,
+      phone,
+    });
+    return normalizeResult(response);
+  } catch (error) {
+    return normalizeError(error);
+  }
+};
+
 export const addStore = async (payload) => {
   try {
     const response = await api.post("/stores", payload);

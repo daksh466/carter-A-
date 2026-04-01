@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import AppLayout from "./components/AppLayout";
 import { AppProvider } from "./context/AppContext.jsx";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Alerts from "./pages/Alerts";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
@@ -44,6 +45,7 @@ function App() {
           <Route path="/" element={<Navigate to={hasToken() ? "/dashboard/welcome" : "/login"} replace />} />
 
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
           <Route
             path="/dashboard/welcome"

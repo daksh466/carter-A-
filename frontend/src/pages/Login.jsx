@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { loginUser } from "../services/api";
 
 const readToken = () => {
@@ -131,6 +131,16 @@ function Login() {
         >
           {loading ? "Signing in..." : "Sign in"}
         </button>
+
+        <p style={{ margin: "16px 0 0", textAlign: "center", color: "#334155" }}>
+          New here?{" "}
+          <Link
+            to="/register"
+            style={{ color: "#0f172a", fontWeight: 700, textDecoration: "none" }}
+          >
+            Create account
+          </Link>
+        </p>
       </form>
     </div>
   );
