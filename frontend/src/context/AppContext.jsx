@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from "react";
+import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { AppContext } from "./AppContextRef";
 import { getStores, getMachinesByStore, getSpareParts, getAlerts, getOrders, createPurchaseOrder, getPurchaseOrders, createMachine, createSparePart, createOrder, deletePurchaseOrder, createTransfer, getTransfers, deleteMachine } from "../services/api";
 
@@ -82,6 +82,12 @@ const readInitialTheme = () => {
 };
 
 export const AppProvider = ({ children }) => {
+  const initialFetchGuard = useRef({
+    stores: false,
+    alerts: false,
+    orders: false,
+  });
+
   // State
   const [stores, setStores] = useState([]);
   const [machines, setMachines] = useState([]);
@@ -163,6 +169,8 @@ export const AppProvider = ({ children }) => {
 
   // Fetch stores on mount
   useEffect(() => {
+    if (initialFetchGuard.current.stores) return;
+    initialFetchGuard.current.stores = true;
     refreshStores();
     // eslint-disable-next-line
   }, []);
@@ -220,6 +228,8 @@ export const AppProvider = ({ children }) => {
 
   // Fetch alerts on mount
   useEffect(() => {
+    if (initialFetchGuard.current.alerts) return;
+    initialFetchGuard.current.alerts = true;
     const fetchAlerts = async () => {
       try {
         setAlertsLoading(true);
@@ -243,6 +253,8 @@ export const AppProvider = ({ children }) => {
 
   // Fetch orders on mount
   useEffect(() => {
+    if (initialFetchGuard.current.orders) return;
+    initialFetchGuard.current.orders = true;
     const fetchOrders = async () => {
       try {
         setOrdersLoading(true);

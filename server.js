@@ -66,25 +66,51 @@ app.use(helmet());
 app.use(httpLogger);
 app.use(cors());
 app.use(express.json());
+app.set('trust proxy', 1);
 // Request ID for tracing
 app.use(requestId);
 // Input sanitization (XSS, NoSQL injection)
 app.use(sanitize);
 
-// Enhanced rate limiting
+// Enhanced rate limiting (auth strict + API relaxed with env toggle)
+const DISABLE_RATE_LIMIT = /^(1|true|yes|on)$/i.test(String(process.env.DISABLE_RATE_LIMIT || '').trim());
+const AUTH_RATE_LIMIT_MAX = Number(process.env.AUTH_RATE_LIMIT_MAX || 25);
+const GENERAL_RATE_LIMIT_MAX = Number(process.env.GENERAL_RATE_LIMIT_MAX || 1200);
+
+const limiter429Handler = (req, res) => {
+  return res.status(429).json({
+    success: false,
+    message: 'Server busy, try again shortly'
+  });
+};
+
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // strict for auth
-  message: { success: false, message: 'Too many login attempts, try again later.' }
+  windowMs: 15 * 60 * 1000,
+  max: AUTH_RATE_LIMIT_MAX,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: limiter429Handler,
+  skip: () => DISABLE_RATE_LIMIT
 });
+
+const relaxedRoutes = ['/api/stores', '/api/orders', '/api/inventory', '/api/alerts'];
+
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100, // moderate for normal
-  message: { success: false, message: 'Too many requests, try again later.' }
+  max: GENERAL_RATE_LIMIT_MAX,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: limiter429Handler,
+  skip: (req) => {
+    if (DISABLE_RATE_LIMIT) return true;
+    const requestPath = String(req.path || req.originalUrl || '');
+    return relaxedRoutes.some((prefix) => requestPath.startsWith(prefix));
+  }
 });
+
 app.use('/api/users/login', authLimiter);
 app.use('/api/users/register', authLimiter);
-app.use(generalLimiter);
+app.use('/api', generalLimiter);
 
 
 

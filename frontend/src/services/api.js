@@ -107,6 +107,45 @@ const persistAuth = ({ token, user }) => {
 export const API_BASE_URL = ensureApiOrigin(API);
 export const API_ROOT = `${API_BASE_URL}/api`;
 
+const RESPONSE_CACHE = new Map();
+const IN_FLIGHT = new Map();
+const DEFAULT_CACHE_TTL_MS = 8000;
+
+const buildCacheKey = (key, params = null) => {
+  if (!params || typeof params !== "object") return key;
+  const sorted = Object.keys(params)
+    .sort()
+    .reduce((acc, paramKey) => {
+      acc[paramKey] = params[paramKey];
+      return acc;
+    }, {});
+  return `${key}:${JSON.stringify(sorted)}`;
+};
+
+const withCachedRequest = async (cacheKey, requestFn, ttlMs = DEFAULT_CACHE_TTL_MS) => {
+  const now = Date.now();
+  const cached = RESPONSE_CACHE.get(cacheKey);
+  if (cached && cached.expiresAt > now) {
+    return cached.value;
+  }
+
+  if (IN_FLIGHT.has(cacheKey)) {
+    return IN_FLIGHT.get(cacheKey);
+  }
+
+  const pending = requestFn()
+    .then((value) => {
+      RESPONSE_CACHE.set(cacheKey, { value, expiresAt: Date.now() + ttlMs });
+      return value;
+    })
+    .finally(() => {
+      IN_FLIGHT.delete(cacheKey);
+    });
+
+  IN_FLIGHT.set(cacheKey, pending);
+  return pending;
+};
+
 const api = axios.create({
   baseURL: API_ROOT,
 });
@@ -158,7 +197,9 @@ const normalizeError = (error) => {
   const payload = error?.response?.data || {};
   const status = Number(error?.response?.status || 0);
   const path = error?.config?.url || "unknown-endpoint";
-  const message = payload?.message || payload?.error || error?.message || "Request failed";
+  const message = status === 429
+    ? (payload?.message || "Server busy, try again shortly")
+    : (payload?.message || payload?.error || error?.message || "Request failed");
 
   // Avoid noisy error spam for optional endpoints missing in some deployments.
   if (status === 404) {
@@ -207,16 +248,18 @@ const unwrapArray = (value, fallbackKeys = []) => {
 };
 
 export const getStores = async () => {
-  try {
-    const response = await api.get("/stores");
-    const normalized = normalizeResult(response);
-    return {
-      ...normalized,
-      data: unwrapArray(normalized.data, ["stores"]),
-    };
-  } catch (error) {
-    return normalizeError(error);
-  }
+  return withCachedRequest("stores:list", async () => {
+    try {
+      const response = await api.get("/stores");
+      const normalized = normalizeResult(response);
+      return {
+        ...normalized,
+        data: unwrapArray(normalized.data, ["stores"]),
+      };
+    } catch (error) {
+      return normalizeError(error);
+    }
+  });
 };
 
 export const loginUser = async ({ username, password }) => {
@@ -384,47 +427,52 @@ export const deleteSparePart = async (id) => {
 };
 
 export const getAlerts = async () => {
-  try {
-    const response = await api.get("/alerts");
-    const normalized = normalizeResult(response);
-    return {
-      ...normalized,
-      data: unwrapArray(normalized.data, ["alerts"]),
-    };
-  } catch (error) {
-    if (isNotFoundError(error)) {
-      return emptySuccess([], "Alerts endpoint unavailable, showing no alerts");
+  return withCachedRequest("alerts:list", async () => {
+    try {
+      const response = await api.get("/alerts");
+      const normalized = normalizeResult(response);
+      return {
+        ...normalized,
+        data: unwrapArray(normalized.data, ["alerts"]),
+      };
+    } catch (error) {
+      if (isNotFoundError(error)) {
+        return emptySuccess([], "Alerts endpoint unavailable, showing no alerts");
+      }
+      return normalizeError(error);
     }
-    return normalizeError(error);
-  }
+  });
 };
 
 export const getOrders = async (params = {}) => {
-  try {
-    const response = await api.get("/orders", { params });
-    const normalized = normalizeResult(response);
-    return {
-      ...normalized,
-      data: unwrapArray(normalized.data, ["orders"]),
-      summary: normalized.summary || normalized.data?.summary,
-    };
-  } catch (firstError) {
-    if (!isNotFoundError(firstError)) {
-      return normalizeError(firstError);
-    }
-
+  const cacheKey = buildCacheKey("orders:list", params);
+  return withCachedRequest(cacheKey, async () => {
     try {
-      const fallback = await api.get("/orders-list", { params });
-      const normalized = normalizeResult(fallback);
+      const response = await api.get("/orders", { params });
+      const normalized = normalizeResult(response);
       return {
         ...normalized,
         data: unwrapArray(normalized.data, ["orders"]),
         summary: normalized.summary || normalized.data?.summary,
       };
-    } catch (error) {
-      return normalizeError(error || firstError);
+    } catch (firstError) {
+      if (!isNotFoundError(firstError)) {
+        return normalizeError(firstError);
+      }
+
+      try {
+        const fallback = await api.get("/orders-list", { params });
+        const normalized = normalizeResult(fallback);
+        return {
+          ...normalized,
+          data: unwrapArray(normalized.data, ["orders"]),
+          summary: normalized.summary || normalized.data?.summary,
+        };
+      } catch (error) {
+        return normalizeError(error || firstError);
+      }
     }
-  }
+  });
 };
 
 export const createOrder = async (payload) => {

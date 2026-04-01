@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const rateLimit = require('express-rate-limit');
 const connectDB = require('./config/db');
 const path = require('path');
 const { randomUUID } = require('crypto');
@@ -152,6 +153,9 @@ console.log('Serving frontend mode:', process.env.NODE_ENV);
 const isProduction = process.env.NODE_ENV === 'production';
 const frontendBuildPath = path.join(__dirname, '../frontend/dist');
 const SLOW_ENDPOINT_MS = Number(process.env.SLOW_ENDPOINT_MS || 250);
+const DISABLE_RATE_LIMIT = /^(1|true|yes|on)$/i.test(String(process.env.DISABLE_RATE_LIMIT || '').trim());
+const AUTH_RATE_LIMIT_MAX = Number(process.env.AUTH_RATE_LIMIT_MAX || 25);
+const GENERAL_RATE_LIMIT_MAX = Number(process.env.GENERAL_RATE_LIMIT_MAX || 1200);
 const METRICS_WINDOW_SIZE = 500;
 const METRICS_REQUIRE_AUTH = /^(1|true|yes|on)$/i.test(String(process.env.METRICS_REQUIRE_AUTH || '').trim());
 const METRICS_AUTH_TOKEN = String(process.env.METRICS_AUTH_TOKEN || '').trim();
@@ -218,6 +222,42 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
+app.set('trust proxy', 1);
+
+const limiter429Handler = (req, res) => {
+  return res.status(429).json({
+    success: false,
+    message: 'Server busy, try again shortly'
+  });
+};
+
+const authRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: AUTH_RATE_LIMIT_MAX,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: limiter429Handler,
+  skip: () => DISABLE_RATE_LIMIT
+});
+
+const relaxedRoutes = ['/api/stores', '/api/orders', '/api/inventory', '/api/alerts'];
+
+const generalRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: GENERAL_RATE_LIMIT_MAX,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: limiter429Handler,
+  skip: (req) => {
+    if (DISABLE_RATE_LIMIT) return true;
+    const requestPath = String(req.path || req.originalUrl || '');
+    return relaxedRoutes.some((prefix) => requestPath.startsWith(prefix));
+  }
+});
+
+app.use('/api/users/login', authRateLimiter);
+app.use('/api/users/register', authRateLimiter);
+app.use('/api', generalRateLimiter);
 
 // Serve frontend static files only in production.
 if (isProduction) {
