@@ -25,9 +25,7 @@ const mapShipmentStatus = (transfer = {}) => {
 
 const Logistics = () => {
   const navigate = useNavigate();
-  const { stores } = useApp();
-
-  const [darkMode, setDarkMode] = useState(false);
+  const { stores, darkMode, toggleTheme } = useApp();
   const [loading, setLoading] = useState(true);
   const [transfers, setTransfers] = useState([]);
   const [activeStoreId, setActiveStoreId] = useState('');
@@ -206,7 +204,7 @@ const Logistics = () => {
             {filteredRows.some((row) => row.statusMeta.label === 'Low Stock') && (
               <button type="button" className="erp-btn" onClick={() => setToast('Reorder suggestions prepared')}>Reorder</button>
             )}
-            <button type="button" className="erp-btn" onClick={() => setDarkMode((current) => !current)}>
+            <button type="button" className="erp-btn" onClick={toggleTheme}>
               {darkMode ? 'Light' : 'Dark'} Mode
             </button>
           </div>

@@ -71,6 +71,16 @@ const buildOrdersSummary = (orders = []) => {
   };
 };
 
+const readInitialTheme = () => {
+  if (typeof window === "undefined") return false;
+
+  const persisted = String(window.localStorage.getItem("darkMode") || "").trim();
+  if (persisted === "true") return true;
+  if (persisted === "false") return false;
+
+  return window.matchMedia?.("(prefers-color-scheme: dark)")?.matches || false;
+};
+
 export const AppProvider = ({ children }) => {
   // State
   const [stores, setStores] = useState([]);
@@ -82,6 +92,7 @@ export const AppProvider = ({ children }) => {
   const [ordersSummary, setOrdersSummary] = useState({ total: 0, paid: 0, pending: 0, totalAmount: 0, averageAmount: 0 });
   const [selectedStore, setSelectedStore] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [darkMode, setDarkMode] = useState(readInitialTheme);
   // Loading and error states
   const [loading, setLoading] = useState(true);
   const [storeLoading, setStoreLoading] = useState(false);
@@ -112,6 +123,17 @@ export const AppProvider = ({ children }) => {
   const [transfersError, setTransfersError] = useState(null);
   const [createTransferLoading, setCreateTransferLoading] = useState(false);
   const [createTransferError, setCreateTransferError] = useState(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    window.localStorage.setItem("darkMode", String(darkMode));
+    document.documentElement.classList.toggle("dark", darkMode);
+  }, [darkMode]);
+
+  const toggleTheme = useCallback(() => {
+    setDarkMode((previous) => !previous);
+  }, []);
 
   // Centralized refreshStores function
   const refreshStores = async () => {
@@ -632,6 +654,9 @@ export const AppProvider = ({ children }) => {
 
   // Context value
   const value = {
+    darkMode,
+    setDarkMode,
+    toggleTheme,
     stores,
     selectedStore,
     setSelectedStore,
